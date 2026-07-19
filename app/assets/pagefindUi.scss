@@ -1,0 +1,48 @@
+.search-output {
+  ul.結果一覧 {
+    list-style-type: none;
+    margin-left: -22px;
+    hr {
+      margin: 7px 0 7px 11px;
+    }
+    li.項目 {
+      margin: 0;
+      a {
+        text-decoration: none;
+        margin: 0;
+        &:hover {
+          h2 {
+            text-decoration: underline;
+          }
+        }
+        h2 {
+          margin: 0;
+          font-family: 'Fira Code Variable', 'Zen Kaku Gothic New', monospace;
+          font-size: 20px;
+          color: var(--themeColor);
+        }
+        p.詳細 {
+          margin: 3px auto;
+        }
+      }
+    }
+    ul.サブ結果 {
+      margin: 0;
+      padding: 0 0 0 1.5em;
+      li.中身 {
+        a {
+          margin: 0;
+          text-decoration: none;
+          h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--themeColor);
+          }
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}

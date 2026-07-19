@@ -16,10 +16,37 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.16.0",
     "@types/node": "^24.13.3",
+    "@types/better-sqlite3": "^7.6.13",
     "eslint": "^10.7.0",
     "nuxt": "^4.5.0",
     "oxfmt": "^0.59.0",
     "typescript": "^6.0.3",
     "vue": "^3.5.40"
+  },
+  "dependencies": {
+    "@fontsource-variable/fira-code": "^5.2.7",
+    "@fontsource-variable/m-plus-1-code": "^5.2.9",
+    "@fontsource/zen-kaku-gothic-new": "^5.2.7",
+    "@fontsource/zen-maru-gothic": "^5.2.8",
+    "@nuxt/content": "^3.13.0",
+    "@nuxtjs/color-mode": "4.0.1",
+    "@unocss/reset": "^66.6.8",
+    "@vueuse/core": "^14.3.0",
+    "better-sqlite3": "^12.9.0",
+    "idb-keyval": "^6.2.2",
+    "katex": "^0.16.47",
+    "pagefind": "1.5.2",
+    "ufo": "^1.6.4",
+    "unstorage": "^1.17.5",
+    "zod": "^4.4.3",
+    "@iconify-json/hugeicons": "^1.2.27",
+    "@iconify-json/material-symbols-light": "^1.2.69",
+    "@nuxtjs/sitemap": "^8.2.1",
+    "@unocss/nuxt": "^66.6.8",
+    "pug": "^3.0.4",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "sass": "^1.99.0",
+    "unocss": "^66.6.8"
   }
 }
