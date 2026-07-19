@@ -110,7 +110,7 @@ const changeColorMode = () => {
           <li>
             <a href="/sitemap.xml">{{ i18n.site_map }}</a>
           </li>
-          <li v-if="appConfig.githubLink">
+          <li v-if="appConfig.myDict.githubLink">
             <NuxtLink
               :to="
                 joinURL(
@@ -129,8 +129,8 @@ const changeColorMode = () => {
 
           <MenuMore />
 
-          <li>{{ appConfig.siteName }}</li>
-          <li>&copy; {{ appConfig.copyRight }}</li>
+          <li>{{ appConfig.myDict.siteName }}</li>
+          <li>&copy; {{ appConfig.myDict.copyRight }}</li>
         </ul>
       </div>
     </Transition>
