@@ -5,6 +5,8 @@ import {
   presetMini
 } from 'unocss';
 
+console.log('UNO CONFIG LOADED');
+
 export default defineConfig({
   // ...UnoCSS options
   presets: [

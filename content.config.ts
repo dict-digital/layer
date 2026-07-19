@@ -1,6 +1,8 @@
 import { defineContentConfig, defineCollection } from '@nuxt/content';
 import { z } from 'zod';
 
+console.log("CONTENT CONFIG LOADED");
+
 export default defineContentConfig({
   collections: {
     dictionary: defineCollection({
