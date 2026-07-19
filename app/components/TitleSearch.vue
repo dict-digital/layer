@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const appConfig = useAppConfig().myDict;
+const appConfig = useAppConfig();
 
-const i18n = appConfig.i18n;
+const i18n = appConfig.myDict.i18n;
 
 const props = defineProps({
   query: String

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const appConfig = useAppConfig().myDict;
+const appConfig = useAppConfig();
 
 definePageMeta({
   hideSidebar: false,
@@ -9,7 +9,7 @@ definePageMeta({
 });
 
 useSeoMeta({
-  title: appConfig.siteName
+  title: appConfig.myDict.siteName
 });
 </script>
 

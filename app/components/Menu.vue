@@ -3,9 +3,9 @@ import { ref, onMounted, onUnmounted } from 'vue';
 
 import { joinURL, withoutHost } from 'ufo';
 
-const appConfig = useAppConfig().myDict;
+const appConfig = useAppConfig();
 
-const i18n = appConfig.i18n;
+const i18n = appConfig.myDict.i18n;
 
 const colorMode = useColorMode();
 
@@ -115,7 +115,7 @@ const changeColorMode = () => {
               :to="
                 joinURL(
                   'https://github.com/',
-                  withoutHost(appConfig.githubLink)
+                  withoutHost(appConfig.myDict.githubLink)
                 )
               "
               target="_blank"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const appConfig = useAppConfig().myDict;
+const appConfig = useAppConfig();
 
-const i18n = appConfig.i18n;
+const i18n = appConfig.myDict.i18n;
 </script>
 
 <template>

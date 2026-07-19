@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
+import { createResolver } from '@nuxt/kit'
+const { resolve } = createResolver(import.meta.url)
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -37,7 +40,7 @@ export default defineNuxtConfig({
   css: [
     '@unocss/reset/sanitize/sanitize.css',
     '@unocss/reset/sanitize/assets.css',
-    './app/assets/global.scss',
+    resolve('./app/assets/global.scss'),
     'katex/dist/katex.min.css'
   ],
   devtools: { enabled: true },

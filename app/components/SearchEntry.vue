@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useStorage } from '@vueuse/core';
 
-const appConfig = useAppConfig().myDict;
+const appConfig = useAppConfig();
 
-const i18n = appConfig.i18n;
+const i18n = appConfig.myDict.i18n;
 
 const query = useStorage('dict-search-query', '');
 const mode = useStorage('dict-search-mode', '見出し');

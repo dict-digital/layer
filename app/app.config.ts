@@ -39,45 +39,45 @@ export default defineAppConfig({
 declare module '@nuxt/schema' {
   interface MyDictConfig {
     theme: {
-      lightColor: string;
-      darkColor: string;
-    };
-    siteName: string;
-    copyRight: string;
-    githubLink: string;
+      lightColor: string
+      darkColor: string
+    }
+    siteName: string
+    copyRight: string
+    githubLink: string
     i18n: {
-      search: string;
-      title: string;
-      full_text: string;
+      search: string
+      title: string
+      full_text: string
       color_mode: {
-        name: string;
-        system: string;
-        light: string;
-        dark: string;
-      };
+        name: string
+        system: string
+        light: string
+        dark: string
+      }
       search_component: {
-        no_result: string;
-        searching: string;
+        no_result: string
+        searching: string
         len: {
-          before: string;
-          after: string;
-        };
-        type_to_search: string;
-        all: string;
-      };
-      site_map: string;
-      display_markdown: string;
-      edit_this_page: string;
-      not_found_title: string;
-      not_found_error: string;
-    };
+          before: string
+          after: string
+        }
+        type_to_search: string
+        all: string
+      }
+      site_map: string
+      display_markdown: string
+      edit_this_page: string
+      not_found_title: string
+      not_found_error: string
+    }
   }
 
   interface AppConfigInput {
-    myDict?: Partial<MyDictConfig>;
+    myDict?: MyDictConfig
   }
 
   interface AppConfig {
-    myDict: MyDictConfig;
+    myDict: MyDictConfig
   }
 }

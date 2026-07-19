@@ -3,9 +3,9 @@ import { joinURL, withoutHost } from 'ufo';
 
 const slugArray = useRoute().params.slug; // [...slug] の場合は配列になる
 
-const appConfig = useAppConfig().myDict;
+const appConfig = useAppConfig();
 
-const i18n = appConfig.i18n;
+const i18n = appConfig.myDict.i18n;
 
 // 配列を "dir1/dir2/page" のようなスラッシュ区切りの文字列に変換
 // 万が一空（ルートパス）の場合を考慮して、空文字をデフォルト値に設定
@@ -56,7 +56,7 @@ route.meta.menuTitle = post.value?.title || 'Dictionary';
         :to="
           joinURL(
             'https://raw.githubusercontent.com',
-            withoutHost(appConfig.githubLink),
+            withoutHost(appConfig.myDict.githubLink),
             'refs/heads/main/content/',
             post.path,
             'index.md'
@@ -71,7 +71,7 @@ route.meta.menuTitle = post.value?.title || 'Dictionary';
         :to="
           joinURL(
             'https://github.com',
-            withoutHost(appConfig.githubLink),
+            withoutHost(appConfig.myDict.githubLink),
             '/edit/main/content',
             post.path,
             'index.md'
