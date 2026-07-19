@@ -57,6 +57,11 @@ export default defineNuxtConfig({
     close: (nuxt) => {
       if (process.env.NODE_ENV !== 'production') return;
 
+      if (process.argv.includes('prepare')) {
+        console.log('[Pagefind] Skipped during nuxt prepare');
+        return;
+      }
+
       // 親プロジェクトの実際の静的ファイル出力先（通常は .output/public や dist）を取得
       const generateDir =
         nuxt?.options?.nitro?.output?.publicDir ||

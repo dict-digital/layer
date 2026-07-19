@@ -6,7 +6,7 @@ const appConfig = useAppConfig();
 const i18n = appConfig.myDict.i18n;
 
 // CSS
-import '~/assets/pagefindUi.scss';
+import s from '../assets/pagefindUi.module.scss';
 
 // 1. Props の定義
 const props = withDefaults(
@@ -92,7 +92,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="search-output">
+  <div :class="s.search_output">
     <template v-if="loading">
       <p text-center>{{ i18n.search_component.searching }}</p>
     </template>
