@@ -1,8 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import { createResolver } from '@nuxt/kit'
-const { resolve } = createResolver(import.meta.url)
+import { createResolver } from '@nuxt/kit';
+import { execSync } from 'child_process';
+import { join } from 'node:path';
+const { resolve } = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
   app: {
@@ -48,6 +50,34 @@ export default defineNuxtConfig({
     defaults: {
       nuxtLink: {
         trailingSlash: 'append'
+      }
+    }
+  },
+  hooks: {
+    close: (nuxt) => {
+      if (process.env.NODE_ENV !== 'production') return;
+
+      // 親プロジェクトの実際の静的ファイル出力先（通常は .output/public や dist）を取得
+      const generateDir =
+        nuxt?.options?.nitro?.output?.publicDir ||
+        join(process.cwd(), '.output/public');
+
+      const siteDir = join(generateDir, 'content');
+
+      const outputDir = join(generateDir, 'content_search');
+
+      console.log(`[Pagefind] Indexing target: ${siteDir}`);
+      console.log(`[Pagefind] Output target: ${outputDir}`);
+
+      try {
+        execSync(
+          `pnpm exec pagefind --site "${siteDir}" --output-path "${outputDir}"`,
+          {
+            stdio: 'inherit'
+          }
+        );
+      } catch (error) {
+        console.error('[Pagefind] Indexing failed:', error);
       }
     }
   },
