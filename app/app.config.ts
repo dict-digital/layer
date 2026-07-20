@@ -6,7 +6,7 @@ export default defineAppConfig({
     },
     siteName: 'template - dict.digital',
     copyRight: '2026 dict.digital',
-    githubLink: 'https://github.com/dict-digital/template',
+    githubLink: 'https://github.com/dict-digital/layer',
     i18n: {
       search: 'Search',
       title: 'Title',
