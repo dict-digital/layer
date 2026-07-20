@@ -1,7 +1,7 @@
 {
   "name": "@digidict/layer-nuxt",
   "type": "module",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Create your own web-based dictionary with our layer.",
   "author": {
     "name": "Tsubasa Terasawa",
