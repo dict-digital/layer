@@ -52,8 +52,8 @@ const refinedSrc = computed(() => {
     :width="props.width"
     :height="props.height"
   />
-  <p text-center m-0 v-if="props.alt">
-    <span text-4xl i-material-symbols-light-arrow-drop-up></span>
+  <p v-if="props.alt" text-center m-0>
+    <span text-4xl i-material-symbols-light-arrow-drop-up />
     {{ props.alt }}
   </p>
 </template>

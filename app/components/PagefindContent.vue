@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch } from 'vue';
 
+// CSS
+import s from '../assets/pagefindUi.module.scss';
+
 const appConfig = useAppConfig();
 
 const i18n = appConfig.myDict.i18n;
-
-// CSS
-import s from '../assets/pagefindUi.module.scss';
 
 // 1. Props の定義
 const props = withDefaults(
@@ -112,7 +112,7 @@ onMounted(async () => {
                 text-[var(--themeColor)]
                 class="詳細"
                 v-html="result.excerpt"
-              ></p>
+              />
             </NuxtLink>
           </li>
 

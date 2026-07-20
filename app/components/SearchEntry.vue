@@ -15,13 +15,14 @@ const mode = useStorage('dict-search-mode', '見出し');
       <ClientOnly>
         <div h-10 w-full flex p-0 class="searchSlot">
           <input
+            v-model="query"
             h-full
             w-full
             type="text"
             :placeholder="i18n.search"
-            v-model="query"
           />
           <button
+            v-if="query"
             bg-transparent
             h-full
             w-10
@@ -34,9 +35,8 @@ const mode = useStorage('dict-search-mode', '見出し');
             border-0
             m-0
             @click="query = ''"
-            v-if="query"
           >
-            <span i-hugeicons-cancel-01></span>
+            <span i-hugeicons-cancel-01 />
           </button>
         </div>
 
@@ -54,8 +54,8 @@ const mode = useStorage('dict-search-mode', '見出し');
       </ClientOnly>
 
       <div class="others" h-full w-full mt-3>
-        <PagefindContent :query="query" v-if="mode === '全文'" />
-        <TitleSearch :query="query" v-else />
+        <PagefindContent v-if="mode === '全文'" :query="query" />
+        <TitleSearch v-else :query="query" />
       </div>
     </section>
   </div>

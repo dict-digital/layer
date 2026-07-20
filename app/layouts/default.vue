@@ -6,9 +6,9 @@ const route = useRoute();
   <div class="root" m-0 p-0 flex flex-col>
     <!-- menu on the screen top -->
     <div h-11 m-0 flex justify-between>
-      <span></span>
-      <Header />
-      <Menu />
+      <span />
+      <DictHeader />
+      <DictMenu />
     </div>
     <div class="content" m-0 flex>
       <!-- sidebar -->
@@ -40,7 +40,7 @@ const route = useRoute();
             >
           </span>
           <span>{{ route.meta.menuTitle || 'Dictionary' }}</span>
-          <span w-15> </span>
+          <span w-15 />
         </div>
 
         <article class="slotBox">

@@ -13,9 +13,7 @@ const route = useRoute();
 
 watch(
   () => route.path,
-  (newPath, oldPath) => {
-    close();
-  }
+  () => close()
 );
 
 // メニューの開閉状態を管理
@@ -74,7 +72,7 @@ const changeColorMode = () => {
       cursor-pointer
       @click="toggleMenu"
     >
-      <span i-hugeicons-more-horizontal></span>
+      <span i-hugeicons-more-horizontal />
     </button>
 
     <Transition name="popup-menu">
@@ -94,10 +92,10 @@ const changeColorMode = () => {
           <!-- 区切りは <hr /> で表記 -->
           <li>
             <button
-              @click="changeColorMode"
               justify-between
               w-full
               items-center
+              @click="changeColorMode"
             >
               <span>{{ i18n.color_mode.name }}</span>
               <span>{{
@@ -120,7 +118,7 @@ const changeColorMode = () => {
               "
               target="_blank"
             >
-              <span i-hugeicons-github-01></span>
+              <span i-hugeicons-github-01 />
               GitHub</NuxtLink
             >
           </li>

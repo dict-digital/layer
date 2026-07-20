@@ -31,7 +31,7 @@ const filteredWords = computed(() => {
 </script>
 
 <template>
-  <ul h-full v-if="filteredWords?.length" class="listRoot">
+  <ul v-if="filteredWords?.length" h-full class="listRoot">
     <template v-for="word in filteredWords" :key="word.path">
       <hr />
       <li w-full>

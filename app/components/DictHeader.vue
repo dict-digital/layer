@@ -8,7 +8,7 @@ const i18n = appConfig.myDict.i18n;
   <header class="root" h-full flex justify-center items-center>
     <div class="nav" flex justify-center items-center>
       <NuxtLink to="/">
-        <span i-hugeicons-search-02></span>
+        <span i-hugeicons-search-02 />
         {{ i18n.search }}
       </NuxtLink>
     </div>

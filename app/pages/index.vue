@@ -14,5 +14,5 @@ useSeoMeta({
 </script>
 
 <template lang="pug">
-  <Welcome />
+  <WelcomePage />
 </template>

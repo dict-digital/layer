@@ -31,10 +31,10 @@ route.meta.menuTitle = post.value?.title || 'Dictionary';
 
 <template>
   <!-- Render the post as Prose & Vue components -->
-  <div data-pagefind-body w-full v-if="post" class="root">
+  <div v-if="post" data-pagefind-body w-full class="root">
     <h1>
       <span data-pagefind-meta="title">{{ post.title }}</span>
-      <small class="detail" v-if="post.category"
+      <small v-if="post.category" class="detail"
         >（
         <span data-pagefind-meta="category">{{ post.category }}</span>
         ）</small
@@ -64,7 +64,7 @@ route.meta.menuTitle = post.value?.title || 'Dictionary';
         "
         target="_blank"
       >
-        <span i-material-symbols-light-docs></span>
+        <span i-material-symbols-light-docs />
         {{ i18n.display_markdown }}
       </NuxtLink>
       <NuxtLink
@@ -79,7 +79,7 @@ route.meta.menuTitle = post.value?.title || 'Dictionary';
         "
         target="_blank"
       >
-        <span i-material-symbols-light-edit></span>
+        <span i-material-symbols-light-edit />
         {{ i18n.edit_this_page }}
       </NuxtLink>
     </div>
