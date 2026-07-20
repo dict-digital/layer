@@ -109,7 +109,6 @@ onMounted(async () => {
             <NuxtLink class="項目リンク" :href="result.url" text-left>
               <h2>{{ result.meta.title || result.url }}</h2>
               <p
-                text-[var(--themeColor)]
                 class="詳細"
                 v-html="result.excerpt"
               />
