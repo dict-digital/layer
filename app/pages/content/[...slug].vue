@@ -17,7 +17,7 @@ const { data: post } = await useAsyncData(`dict-${slugPath}`, () => {
 });
 
 useSeoMeta({
-  title: post.value?.title + ' - ' + appConfig.siteName
+  title: post.value?.title + ' - ' + appConfig.myDict.siteName
 });
 
 definePageMeta({
@@ -45,7 +45,7 @@ route.meta.menuTitle = post.value?.title || 'Dictionary';
     </div>
 
     <div
-      v-if="appConfig.githubLink"
+      v-if="appConfig.myDict.githubLink"
       data-pagefind-ignore
       w-full
       flex
