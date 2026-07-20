@@ -1,45 +1,47 @@
 <script setup lang="ts">
-import { withTrailingSlash, withLeadingSlash, joinURL } from 'ufo'
-import { useRuntimeConfig, computed } from '#imports'
+import { withTrailingSlash, withLeadingSlash, joinURL } from 'ufo';
+import { useRuntimeConfig, computed } from '#imports';
 
-import ImageComponent from '#build/mdc-image-component.mjs'
+import ImageComponent from '#build/mdc-image-component.mjs';
 
 const props = defineProps({
   src: {
     type: String,
-    default: '',
+    default: ''
   },
   alt: {
     type: String,
-    default: '',
+    default: ''
   },
   width: {
     type: [String, Number],
-    default: undefined,
+    default: undefined
   },
   height: {
     type: [String, Number],
-    default: undefined,
-  },
-})
+    default: undefined
+  }
+});
 
 const refinedSrc = computed(() => {
-  let cleanSrc = props.src
+  let cleanSrc = props.src;
 
   // delete '/public'
   if (cleanSrc?.startsWith('/public/')) {
-    cleanSrc = cleanSrc.replace(/^\/public/, '') // ex: '/public/images/test.png' -> '/images/test.png'
+    cleanSrc = cleanSrc.replace(/^\/public/, ''); // ex: '/public/images/test.png' -> '/images/test.png'
   }
 
   if (cleanSrc?.startsWith('/') && !cleanSrc.startsWith('//')) {
-    const _base = withLeadingSlash(withTrailingSlash(useRuntimeConfig().app.baseURL))
+    const _base = withLeadingSlash(
+      withTrailingSlash(useRuntimeConfig().app.baseURL)
+    );
     if (_base !== '/' && !cleanSrc.startsWith(_base)) {
-      return joinURL(_base, cleanSrc)
+      return joinURL(_base, cleanSrc);
     }
   }
-  
-  return cleanSrc
-})
+
+  return cleanSrc;
+});
 </script>
 
 <template>

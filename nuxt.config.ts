@@ -54,7 +54,7 @@ export default defineNuxtConfig({
     }
   },
   hooks: {
-    close: (nuxt) => {
+    'nitro:build:public-assets': (nitro) => {
       if (process.env.NODE_ENV !== 'production') return;
 
       if (process.argv.includes('prepare')) {
@@ -62,13 +62,8 @@ export default defineNuxtConfig({
         return;
       }
 
-      // 親プロジェクトの実際の静的ファイル出力先（通常は .output/public や dist）を取得
-      const generateDir =
-        nuxt?.options?.nitro?.output?.publicDir ||
-        join(process.cwd(), '.output/public');
-
+      const generateDir = nitro.options.output.publicDir;
       const siteDir = join(generateDir, 'content');
-
       const outputDir = join(generateDir, 'content_search');
 
       console.log(`[Pagefind] Indexing target: ${siteDir}`);
@@ -76,7 +71,7 @@ export default defineNuxtConfig({
 
       try {
         execSync(
-          `pnpm exec pagefind --site "${siteDir}" --output-path "${outputDir}"`,
+          `npx --yes pagefind --site "${siteDir}" --output-path "${outputDir}"`,
           {
             stdio: 'inherit'
           }

@@ -1,7 +1,7 @@
 {
   "name": "@digidict/layer-nuxt",
   "type": "module",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Create your own web-based dictionary with our layer.",
   "author": {
     "name": "Tsubasa Terasawa",
@@ -21,6 +21,7 @@
     "generate": "nuxt generate .playground",
     "preview": "nuxt preview .playground",
     "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "oxlint": "oxlint",
