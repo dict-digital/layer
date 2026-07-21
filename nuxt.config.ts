@@ -6,6 +6,8 @@ import { execSync } from 'child_process';
 import { join } from 'node:path';
 const { resolve } = createResolver(import.meta.url);
 
+import 'katex/contrib/mhchem';
+
 export default defineNuxtConfig({
   app: {
     head: {
