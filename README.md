@@ -1,1 +1,1 @@
-# DictDigi (Nuxt Layer ver.)
+# DigiDict (Nuxt Layer ver.)
