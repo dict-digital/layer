@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 
 const emit = defineEmits(['close']);
 
@@ -12,6 +12,28 @@ const { login, logout, isAuthenticated, isInitializing, agent } = useAtpAuth();
 const handleInput = ref('');
 const isLoading = ref(false);
 const errorMessage = ref('');
+
+// ハンドル名保持用
+const userHandle = ref<string | null>(null);
+
+// agent (または isAuthenticated) の変化を監視してハンドル名を取得
+watchEffect(async () => {
+  if (isAuthenticated.value && agent.value) {
+    try {
+      // accountDid または did を使ってプロファイルを取得
+      const targetDid = agent.value.accountDid || agent.value.did;
+      if (targetDid) {
+        const profile = await agent.value.getProfile({ actor: targetDid });
+        userHandle.value = profile.data.handle;
+      }
+    } catch (error) {
+      console.error('Failed to fetch profile handle:', error);
+      userHandle.value = null; // 取得失敗時は null (DIDにフォールバック)
+    }
+  } else {
+    userHandle.value = null;
+  }
+});
 
 const onLoginSubmit = async () => {
   if (!handleInput.value) return;
@@ -69,7 +91,9 @@ const onLoginSubmit = async () => {
         <div flex="~ items-center gap-2" p-3 rounded-lg text-sm>
           <span text-xs>🟢</span>
           <span font-medium>PDS同期中:</span>
-          <code text-xs font-mono truncate max-w-xs>{{ agent?.did }}</code>
+          <code text-xs font-mono truncate max-w-xs>
+            {{ userHandle ? `@${userHandle}` : agent?.did }}
+          </code>
         </div>
         <button
           type="button"
