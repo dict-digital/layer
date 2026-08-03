@@ -120,7 +120,7 @@ const onLoginSubmit = async () => {
             transition="all duration-200"
             hover="opacity-90"
             active="scale-98"
-            disabled="opacity-50 cursor-not-allowed transform-none"
+            un-disabled="opacity-50 cursor-not-allowed transform-none"
           >
             <i v-if="isLoading" i-svg-spinners-180-ring-with-bg />
             <span>{{ isLoading ? '接続中...' : 'PDSと同期する' }}</span>
