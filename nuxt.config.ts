@@ -4,9 +4,9 @@
 import { createResolver } from '@nuxt/kit';
 import { execSync } from 'child_process';
 import { join } from 'node:path';
-const { resolve } = createResolver(import.meta.url);
 
 import 'katex/contrib/mhchem';
+const { resolve } = createResolver(import.meta.url);
 
 export default defineNuxtConfig({
   app: {
