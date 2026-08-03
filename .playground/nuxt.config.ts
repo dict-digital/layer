@@ -1,6 +1,27 @@
 import { fileURLToPath } from 'node:url';
 
 export default defineNuxtConfig({
+  app: {
+    atproto: {
+    oauth: {
+      writeClientMetadata: true,
+      clientMetadata: {
+        remote: '',
+        local: {
+          client_id: 'https://layer.dict.digital/client-metadata.json',
+          client_uri: 'https://layer.dict.digital',
+          redirect_uris: ['https://layer.dict.digital'],
+        }
+      },
+      signInOptions: {
+        state: '',
+        prompt: 'login',
+        scope: 'atproto repo:digital.dict.atproto.settings',
+        ui_locales: 'en'
+      }
+    },
+    debug: true
+  },
   extends: ['..'],
   modules: ['@nuxt/eslint'],
   eslint: {
