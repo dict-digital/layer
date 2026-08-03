@@ -108,10 +108,7 @@ onMounted(async () => {
           <li class="項目">
             <NuxtLink class="項目リンク" :href="result.url" text-left>
               <h2>{{ result.meta.title || result.url }}</h2>
-              <p
-                class="詳細"
-                v-html="result.excerpt"
-              />
+              <p class="詳細" v-html="result.excerpt" />
             </NuxtLink>
           </li>
 

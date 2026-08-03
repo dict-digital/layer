@@ -34,17 +34,17 @@ export default defineNuxtConfig({
           response_types: ['code'],
           token_endpoint_auth_method: 'none',
           application_type: 'web',
-          dpop_bound_access_tokens: true,
-        },
+          dpop_bound_access_tokens: true
+        }
       },
       signInOptions: {
         state: '',
         prompt: 'login',
         scope: 'atproto',
-        ui_locales: 'en',
-      },
+        ui_locales: 'en'
+      }
     },
-    debug: true,
+    debug: true
   },
   colorMode: {
     preference: 'system',

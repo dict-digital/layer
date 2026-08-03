@@ -66,7 +66,7 @@ const { isLogged, session } = useAtprotoSession();
 const { signIn, signOut } = useAtprotoAuth();
 
 const handleAtSession = () => {
-  if ( isLogged ) {
+  if (isLogged) {
     const really = window.confirm(appConfig.myDict.i18n.atproto.signOut);
     if (really) {
       signOut();
@@ -74,7 +74,7 @@ const handleAtSession = () => {
   } else {
     signIn();
   }
-}
+};
 </script>
 
 <template>
@@ -107,9 +107,13 @@ const handleAtSession = () => {
         <ul list-none p-1 m-0>
           <!-- 区切りは <hr /> で表記 -->
           <li>
-            <button justify-between w-full items-center>
-              <span>
-                Atmosphere</span>
+            <button
+              justify-between
+              w-full
+              items-center
+              @click="handleAtSession"
+            >
+              <span> Atmosphere</span>
               <span>
                 <template v-if="isLogged">
                   {{ session?.sub }}
