@@ -1,8 +1,7 @@
 import { fileURLToPath } from 'node:url';
 
 export default defineNuxtConfig({
-  app: {
-    atproto: {
+  atproto: {
     oauth: {
       writeClientMetadata: true,
       clientMetadata: {
