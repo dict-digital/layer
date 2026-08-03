@@ -81,16 +81,16 @@ const handle = ref<string>('');
 watch(
   () => session.value?.sub,
   async (did) => {
-    if (!did) return;
+    // クライアントサイドかつ DID が存在する場合のみ実行
+    if (!did || !import.meta.client) return;
 
     try {
       const agent = useAtprotoAgent('authenticated');
-      // ログイン中ユーザーのプロファイルを取得
       const profile = await agent.getProfile({ actor: did });
 
-      handle.value = profile.data.handle; // 例: alice.bsky.social
-    } catch (e) {
-      console.error('Failed to fetch profile:', e);
+      handle.value = profile.data.handle;
+    } catch (err) {
+      console.error('Failed to get profile:', err);
     }
   },
   { immediate: true }
