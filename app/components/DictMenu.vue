@@ -7,21 +7,31 @@ const i18n = appConfig.myDict.i18n;
 const colorMode = useColorMode();
 const route = useRoute();
 
+const { isLogged, session } = useAtprotoSession();
+const { signIn, signOut } = useAtprotoAuth();
+
+const isOpen = ref(false);
+const menuContainer = ref<HTMLElement | null>(null);
+
+const handle = ref('');
+const isSettingsLoaded = ref(false);
+const isSavingSettings = ref(false);
+
+const SETTINGS_COLLECTION = 'digital.dict.atproto.settings';
+
 watch(
   () => route.path,
   () => close()
 );
 
-// メニューの開閉状態を管理
-const isOpen = ref(false);
-// メニューの外側をクリックしたときに閉じるための参照
-const menuContainer = ref<HTMLElement | null>(null);
-
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
 };
 
-// メニューの外側をクリックしたら閉じる処理
+const close = () => {
+  isOpen.value = false;
+};
+
 const handleClickOutside = (event: MouseEvent) => {
   if (
     menuContainer.value &&
@@ -39,11 +49,9 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
 
-const close = () => {
-  isOpen.value = false;
-};
-
-// function to change color mode
+/**
+ * カラーモード切り替え
+ */
 const changeColorMode = () => {
   const current = colorMode.preference;
 
@@ -51,106 +59,212 @@ const changeColorMode = () => {
     colorMode.preference = 'light';
   } else if (current === 'light') {
     colorMode.preference = 'dark';
-  } else if (current === 'dark') {
+  } else {
     colorMode.preference = 'system';
   }
 };
 
-// atproto
-
-const { isLogged, session } = useAtprotoSession();
-const { signIn, signOut } = useAtprotoAuth();
-
-const handleAtSession = () => {
+/**
+ * AT Protocol ログイン / ログアウト
+ */
+const handleAtSession = async () => {
   if (isLogged.value) {
-    const really = window.confirm(appConfig.myDict.i18n.atproto.signOut);
+    const really = window.confirm(
+      appConfig.myDict.i18n.atproto.signOut
+    );
+
     if (really) {
-      signOut();
+      await signOut();
     }
   } else {
-    signIn();
+    await signIn();
   }
 };
 
-const handle = ref<string>('');
-
-// --- AT Protocol 設定同期処理 ---
-const SETTINGS_COLLECTION = 'digital.dict.atproto.settings'; // 独自のNSIDを設定
-const isSyncing = ref(false); // 設定取得中の自動保存をガードするフラグ
-
-// PDSからの設定読み込み
+/**
+ * PDSから設定を取得
+ */
 const fetchUserSettings = async (did: string) => {
   if (!import.meta.client) return;
+
   try {
     const agent = useAtprotoAgent('authenticated');
+
     const res = await agent.api.com.atproto.repo.getRecord({
       repo: did,
       collection: SETTINGS_COLLECTION,
       rkey: 'self',
     });
 
-    const record = res.data.value as { colorMode?: string };
-    if (record?.colorMode) {
-      isSyncing.value = true;
+    const record = res.data.value as {
+      colorMode?: 'system' | 'light' | 'dark';
+    };
+
+    if (
+      record?.colorMode === 'system' ||
+      record?.colorMode === 'light' ||
+      record?.colorMode === 'dark'
+    ) {
       colorMode.preference = record.colorMode;
-      // 設定反映後の変更検知を一度スキップするために少し遅延して解除
-      setTimeout(() => {
-        isSyncing.value = false;
-      }, 500);
+
+      console.log(
+        '[ATProto] Color mode restored:',
+        record.colorMode
+      );
     }
-  } catch (err) {
-    // レコードがまだ存在しない（初回ログイン時など）場合は無視
+  } catch (error: any) {
+    // レコード未作成の場合は404になるので無視
+    console.log(
+      '[ATProto] No settings record found:',
+      error
+    );
   }
 };
 
-// PDSへの設定保存
-const saveUserSettings = async (newColorMode: string) => {
-  if (!isLogged.value || !session.value?.sub || !import.meta.client) return;
+/**
+ * PDSへ設定を保存
+ */
+const saveUserSettings = async (
+  colorModePreference: 'system' | 'light' | 'dark'
+) => {
+  if (
+    !isLogged.value ||
+    !session.value?.sub ||
+    !import.meta.client
+  ) {
+    return;
+  }
+
+  if (isSavingSettings.value) {
+    return;
+  }
+
+  isSavingSettings.value = true;
+
   try {
     const agent = useAtprotoAgent('authenticated');
+
     await agent.api.com.atproto.repo.putRecord({
       repo: session.value.sub,
       collection: SETTINGS_COLLECTION,
       rkey: 'self',
       record: {
         $type: SETTINGS_COLLECTION,
-        colorMode: newColorMode,
+        colorMode: colorModePreference,
         updatedAt: new Date().toISOString(),
       },
     });
-  } catch (err) {
-    console.error('Failed to save color mode to PDS:', err);
+
+    console.log(
+      '[ATProto] Color mode saved:',
+      colorModePreference
+    );
+  } catch (error) {
+    console.error(
+      '[ATProto] Failed to save color mode:',
+      error
+    );
+  } finally {
+    isSavingSettings.value = false;
   }
 };
 
-// カラーモードが変更されたらPDSへ同期（保存）
-watch(
-  () => colorMode.preference,
-  (newMode) => {
-    if (isSyncing.value) return; // 復元処理による変更時は保存しない
-    saveUserSettings(newMode);
-  }
-);
-
-// ログイン状態を監視してハンドル名の取得＆設定の復元を実行
+/**
+ * セッション変更
+ *
+ * ログイン:
+ *   1. ハンドル取得
+ *   2. PDS設定取得
+ *   3. 保存watchを有効化
+ *
+ * ログアウト:
+ *   ハンドルをクリア
+ *   保存watchを無効化
+ */
 watch(
   () => session.value?.sub,
   async (did) => {
-    if (!did || !import.meta.client) return;
+    console.log('[ATProto] Session changed:', did);
 
+    isSettingsLoaded.value = false;
+    handle.value = '';
+
+    if (!did || !import.meta.client) {
+      return;
+    }
+
+    const agent = useAtprotoAgent('authenticated');
+
+    /**
+     * まずプロフィールを取得
+     */
     try {
-      const agent = useAtprotoAgent('authenticated');
-      const profile = await agent.getProfile({ actor: did });
+      const profile = await agent.getProfile({
+        actor: did,
+      });
 
       handle.value = profile.data.handle;
 
-      // ログイン完了後に PDS からカラーモード設定を取得
-      await fetchUserSettings(did);
-    } catch (err) {
-      console.error('Failed to get profile or settings:', err);
+      console.log(
+        '[ATProto] Handle:',
+        handle.value
+      );
+    } catch (error) {
+      console.error(
+        '[ATProto] Failed to get profile:',
+        error
+      );
     }
+
+    /**
+     * プロフィール取得とは独立して設定を取得
+     */
+    await fetchUserSettings(did);
+
+    /**
+     * PDSからの初期設定読み込み完了
+     */
+    isSettingsLoaded.value = true;
+
+    console.log(
+      '[ATProto] Settings initialization completed'
+    );
   },
-  { immediate: true }
+  {
+    immediate: true,
+  }
+);
+
+/**
+ * カラーモード変更をPDSへ同期
+ *
+ * PDSからの初期復元が完了してから保存する。
+ */
+watch(
+  () => colorMode.preference,
+  async (newMode) => {
+    console.log(
+      '[ColorMode] preference changed:',
+      newMode
+    );
+
+    if (!isSettingsLoaded.value) {
+      console.log(
+        '[ColorMode] Skip save: settings not loaded yet'
+      );
+      return;
+    }
+
+    if (
+      newMode !== 'system' &&
+      newMode !== 'light' &&
+      newMode !== 'dark'
+    ) {
+      return;
+    }
+
+    await saveUserSettings(newMode);
+  }
 );
 </script>
 
