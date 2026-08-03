@@ -29,7 +29,7 @@ export default defineNuxtConfig({
           tos_uri: 'https://layer.dict.digital/tos',
           policy_uri: 'https://layer.dict.digital/privacy',
           redirect_uris: ['https://layer.dict.digital'],
-          scope: 'atproto',
+          scope: 'atproto repo:digital.dict.atproto.settings',
           grant_types: ['authorization_code', 'refresh_token'],
           response_types: ['code'],
           token_endpoint_auth_method: 'none',
@@ -40,7 +40,7 @@ export default defineNuxtConfig({
       signInOptions: {
         state: '',
         prompt: 'login',
-        scope: 'atproto',
+        scope: 'atproto repo:digital.dict.atproto.settings',
         ui_locales: 'en'
       }
     },
