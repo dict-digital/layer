@@ -9,7 +9,7 @@ export default defineNuxtConfig({
         local: {
           client_id: 'https://layer.dict.digital/client-metadata.json',
           client_uri: 'https://layer.dict.digital',
-          redirect_uris: ['https://layer.dict.digital'],
+          redirect_uris: ['https://layer.dict.digital']
         }
       },
       signInOptions: {

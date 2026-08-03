@@ -16,36 +16,6 @@ export default defineNuxtConfig({
       }
     }
   },
-  atproto: {
-    oauth: {
-      writeClientMetadata: true,
-      clientMetadata: {
-        remote: '',
-        local: {
-          // client_id: 'https://layer.dict.digital/client-metadata.json',
-          client_name: 'DigiDict',
-          // client_uri: 'https://layer.dict.digital',
-          logo_uri: 'https://layer.dict.digital/logo.png',
-          tos_uri: 'https://layer.dict.digital/tos',
-          policy_uri: 'https://layer.dict.digital/privacy',
-          // redirect_uris: ['https://layer.dict.digital'],
-          scope: 'atproto repo:digital.dict.atproto.settings',
-          grant_types: ['authorization_code', 'refresh_token'],
-          response_types: ['code'],
-          token_endpoint_auth_method: 'none',
-          application_type: 'web',
-          dpop_bound_access_tokens: true
-        }
-      },
-      signInOptions: {
-        state: '',
-        prompt: 'login',
-        scope: 'atproto repo:digital.dict.atproto.settings',
-        ui_locales: 'en'
-      }
-    },
-    debug: true
-  },
   colorMode: {
     preference: 'system',
     fallback: 'light',
@@ -117,8 +87,7 @@ export default defineNuxtConfig({
     '@nuxtjs/sitemap',
     '@nuxt/content',
     '@unocss/nuxt',
-    '@nuxtjs/color-mode',
-    'nuxt-atproto'
+    '@nuxtjs/color-mode'
   ],
   nitro: {
     preset: 'static'

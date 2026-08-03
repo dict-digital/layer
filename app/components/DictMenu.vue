@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { joinURL, withoutHost } from 'ufo';
@@ -8,28 +7,11 @@ const i18n = appConfig.myDict.i18n;
 const colorMode = useColorMode();
 const route = useRoute();
 
-const { isLogged, session } = useAtprotoSession();
-const { signIn, signOut } = useAtprotoAuth();
-
 /**
  * メニュー
  */
 const isOpen = ref(false);
 const menuContainer = ref<HTMLElement | null>(null);
-
-/**
- * AT Protocol ユーザープロフィール
- */
-const handle = ref('');
-const isProfileLoaded = ref(false);
-
-/**
- * AT Protocol ユーザー設定
- */
-const isSettingsLoaded = ref(false);
-const isSavingSettings = ref(false);
-
-const SETTINGS_COLLECTION = 'digital.dict.atproto.settings';
 
 /**
  * ルート変更時にメニューを閉じる
@@ -66,17 +48,11 @@ const handleClickOutside = (event: MouseEvent) => {
 };
 
 onMounted(() => {
-  document.addEventListener(
-    'click',
-    handleClickOutside
-  );
+  document.addEventListener('click', handleClickOutside);
 });
 
 onUnmounted(() => {
-  document.removeEventListener(
-    'click',
-    handleClickOutside
-  );
+  document.removeEventListener('click', handleClickOutside);
 });
 
 /**
@@ -93,327 +69,10 @@ const changeColorMode = () => {
     colorMode.preference = 'system';
   }
 };
-
-/**
- * AT Protocol ログイン / ログアウト
- */
-const handleAtSession = async () => {
-  if (isLogged.value) {
-    const really = window.confirm(
-      appConfig.myDict.i18n.atproto.signOut
-    );
-
-    if (really) {
-      await signOut();
-    }
-  } else {
-    await signIn();
-  }
-};
-
-/**
- * --------------------------------------------------
- * プロフィール取得
- * --------------------------------------------------
- *
- * DID から Bluesky プロフィールを取得する。
- *
- * 取得した handle は ref に代入するため、
- * テンプレート側もリアクティブに更新される。
- */
-const fetchUserProfile = async (did: string) => {
-  if (!import.meta.client) {
-    return;
-  }
-
-  isProfileLoaded.value = false;
-  handle.value = '';
-
-  try {
-    const agent =
-      useAtprotoAgent('authenticated');
-
-    const { data } =
-      await agent.api.app.bsky.actor.getProfile({
-        actor: did,
-      });
-
-    console.log(
-      '[ATProto] Profile:',
-      data
-    );
-
-    console.log(
-      '[ATProto] DID:',
-      data.did
-    );
-
-    console.log(
-      '[ATProto] Handle:',
-      data.handle
-    );
-
-    console.log(
-      '[ATProto] Display name:',
-      data.displayName
-    );
-
-    handle.value = data.handle;
-
-    isProfileLoaded.value = true;
-  } catch (error) {
-    console.error(
-      '[ATProto] Failed to get profile:',
-      error
-    );
-
-    handle.value = '';
-    isProfileLoaded.value = false;
-  }
-};
-
-/**
- * --------------------------------------------------
- * PDSからユーザー設定を取得
- * --------------------------------------------------
- */
-const fetchUserSettings = async (
-  did: string
-) => {
-  if (!import.meta.client) {
-    return;
-  }
-
-  try {
-    const agent =
-      useAtprotoAgent('authenticated');
-
-    const res =
-      await agent.api.com.atproto.repo.getRecord({
-        repo: did,
-        collection: SETTINGS_COLLECTION,
-        rkey: 'self',
-      });
-
-    const record = res.data.value as {
-      colorMode?: 'system' | 'light' | 'dark';
-    };
-
-    if (
-      record?.colorMode === 'system' ||
-      record?.colorMode === 'light' ||
-      record?.colorMode === 'dark'
-    ) {
-      colorMode.preference =
-        record.colorMode;
-
-      console.log(
-        '[ATProto] Color mode restored:',
-        record.colorMode
-      );
-    }
-  } catch (error: any) {
-    /**
-     * 設定レコードがまだ存在しない場合は
-     * 404 になるため無視する。
-     */
-    console.log(
-      '[ATProto] No settings record found:',
-      error
-    );
-  }
-};
-
-/**
- * --------------------------------------------------
- * PDSへユーザー設定を保存
- * --------------------------------------------------
- */
-const saveUserSettings = async (
-  colorModePreference:
-    | 'system'
-    | 'light'
-    | 'dark'
-) => {
-  if (
-    !isLogged.value ||
-    !session.value?.sub ||
-    !import.meta.client
-  ) {
-    return;
-  }
-
-  if (isSavingSettings.value) {
-    return;
-  }
-
-  isSavingSettings.value = true;
-
-  try {
-    const agent =
-      useAtprotoAgent('authenticated');
-
-    await agent.api.com.atproto.repo.putRecord({
-      repo: session.value.sub,
-      collection: SETTINGS_COLLECTION,
-      rkey: 'self',
-      record: {
-        $type: SETTINGS_COLLECTION,
-        colorMode: colorModePreference,
-        updatedAt:
-          new Date().toISOString(),
-      },
-    });
-
-    console.log(
-      '[ATProto] Color mode saved:',
-      colorModePreference
-    );
-  } catch (error) {
-    console.error(
-      '[ATProto] Failed to save color mode:',
-      error
-    );
-  } finally {
-    isSavingSettings.value = false;
-  }
-};
-
-/**
- * --------------------------------------------------
- * セッション変更
- * --------------------------------------------------
- *
- * session.sub はログインユーザーの DID。
- *
- * DID が変化したら、
- *
- *   1. プロフィール取得
- *   2. PDS設定取得
- *
- * を実行する。
- *
- * プロフィールと設定は互いに独立しているため、
- * Promise.all() で並列取得する。
- */
-watch(
-  () => session.value?.sub,
-  async (did) => {
-    console.log(
-      '[ATProto] Session changed:',
-      did
-    );
-
-    /**
-     * まず現在の状態をリセット
-     *
-     * ログアウト時もここが実行される。
-     */
-    handle.value = '';
-
-    isProfileLoaded.value = false;
-
-    isSettingsLoaded.value = false;
-
-    /**
-     * ログアウト時
-     */
-    if (
-      !did ||
-      !import.meta.client
-    ) {
-      return;
-    }
-
-    /**
-     * プロフィールと設定を並列取得
-     *
-     * 一方が失敗しても、もう一方は
-     * 取得できるように Promise.allSettled を使用。
-     */
-    await Promise.allSettled([
-      fetchUserProfile(did),
-      fetchUserSettings(did),
-    ]);
-
-    /**
-     * PDSからの初期設定読み込み完了
-     *
-     * これ以降、colorMode.preference の変更を
-     * PDSへ保存する。
-     */
-    isSettingsLoaded.value = true;
-
-    console.log(
-      '[ATProto] Session initialization completed'
-    );
-  },
-  {
-    immediate: true,
-  }
-);
-
-/**
- * --------------------------------------------------
- * カラーモード変更をPDSへ同期
- * --------------------------------------------------
- *
- * 初期状態の復元前は保存しない。
- *
- * これにより、
- *
- *   PDSから light を取得
- *       ↓
- *   colorMode.preference = 'light'
- *       ↓
- *   watch が発火
- *
- * という流れになっても、
- * 初期復元直後の値を不要に保存し直すことを防ぐ。
- */
-watch(
-  () => colorMode.preference,
-  async (newMode) => {
-    console.log(
-      '[ColorMode] preference changed:',
-      newMode
-    );
-
-    /**
-     * PDSからの初期設定取得が終わるまでは
-     * 保存しない。
-     */
-    if (!isSettingsLoaded.value) {
-      console.log(
-        '[ColorMode] Skip save:',
-        'settings not loaded yet'
-      );
-
-      return;
-    }
-
-    /**
-     * 型チェック
-     */
-    if (
-      newMode !== 'system' &&
-      newMode !== 'light' &&
-      newMode !== 'dark'
-    ) {
-      return;
-    }
-
-    await saveUserSettings(newMode);
-  }
-);
 </script>
 
 <template>
-  <div
-    ref="menuContainer"
-    relative
-    inline-block
-  >
+  <div ref="menuContainer" relative inline-block>
     <!-- メニューボタン -->
     <button
       text="[var(--foreground)]"
@@ -441,47 +100,6 @@ watch(
         class="menu-dropdown"
       >
         <ul list-none p-1 m-0>
-          <!-- AT Protocol -->
-          <li>
-            <ClientOnly>
-              <button
-                justify-between
-                w-full
-                items-center
-                @click="handleAtSession"
-              >
-                <span>
-                  Atmosphere
-                </span>
-
-                <span>
-                  <!-- ログイン済み -->
-                  <template v-if="isLogged">
-                    <!-- プロフィール取得済み -->
-                    <template
-                      v-if="isProfileLoaded"
-                    >
-                      {{ handle }}
-                    </template>
-
-                    <!-- プロフィール取得中 -->
-                    <template v-else>
-                      Loading...
-                    </template>
-                  </template>
-
-                  <!-- 未ログイン -->
-                  <template v-else>
-                    {{
-                      appConfig.myDict.i18n
-                        .atproto.login
-                    }}
-                  </template>
-                </span>
-              </button>
-            </ClientOnly>
-          </li>
-
           <!-- カラーモード -->
           <li>
             <button
@@ -491,19 +109,13 @@ watch(
               @click="changeColorMode"
             >
               <span>
-                {{
-                  i18n.color_mode.name
-                }}
+                {{ i18n.color_mode.name }}
               </span>
 
               <span>
                 {{
                   i18n.color_mode[
-                    colorMode.preference as
-                      | 'name'
-                      | 'system'
-                      | 'light'
-                      | 'dark'
+                    colorMode.preference as 'name' | 'system' | 'light' | 'dark'
                   ]
                 }}
               </span>
@@ -518,26 +130,17 @@ watch(
           </li>
 
           <!-- GitHub -->
-          <li
-            v-if="
-              appConfig.myDict.githubLink
-            "
-          >
+          <li v-if="appConfig.myDict.githubLink">
             <NuxtLink
               :to="
                 joinURL(
                   'https://github.com/',
-                  withoutHost(
-                    appConfig.myDict
-                      .githubLink
-                  )
+                  withoutHost(appConfig.myDict.githubLink)
                 )
               "
               target="_blank"
             >
-              <span
-                i-hugeicons-github-01
-              />
+              <span i-hugeicons-github-01 />
 
               GitHub
             </NuxtLink>
@@ -550,16 +153,12 @@ watch(
           <MenuMore />
 
           <li>
-            {{
-              appConfig.myDict.siteName
-            }}
+            {{ appConfig.myDict.siteName }}
           </li>
 
           <li>
             &copy;
-            {{
-              appConfig.myDict.copyRight
-            }}
+            {{ appConfig.myDict.copyRight }}
           </li>
         </ul>
       </div>
@@ -569,18 +168,13 @@ watch(
 
 <style lang="scss" scoped>
 .menu-dropdown {
-  backdrop-filter:
-    blur(4px)
-    brightness(var(--backdropBr));
+  backdrop-filter: blur(4px) brightness(var(--backdropBr));
 
-  border:
-    1px solid
-    var(--codeBack);
+  border: 1px solid var(--codeBack);
 
   height: 400px;
 
-  max-height:
-    calc(100dvh - 80px);
+  max-height: calc(100dvh - 80px);
 
   ul {
     :deep(li) {
@@ -600,49 +194,33 @@ watch(
 
         border-radius: 20px;
 
-        padding:
-          0.5rem
-          1rem;
+        padding: 0.5rem 1rem;
 
         text-align: left;
 
-        background:
-          transparent;
+        background: transparent;
 
         border: none;
 
-        color:
-          var(--foreground);
+        color: var(--foreground);
 
         cursor: pointer;
 
         font-size: 1rem;
 
-        transition:
-          background-color
-          0.2s;
+        transition: background-color 0.2s;
 
-        font-family:
-          'Zen Kaku Gothic New',
-          sans-serif;
+        font-family: 'Zen Kaku Gothic New', sans-serif;
 
         &:hover {
-          background-color:
-            var(--codeBack);
+          background-color: var(--codeBack);
         }
       }
 
       hr {
-        margin:
-          20px 4px;
+        margin: 20px 4px;
 
-        color:
-          rgba(
-            255,
-            255,
-            255,
-            0.3
-          );
+        color: rgba(255, 255, 255, 0.3);
 
         height: 0.5px;
       }
@@ -664,8 +242,6 @@ watch(
 .popup-menu-leave-to {
   opacity: 0;
 
-  transform:
-    translateY(-10px)
-    scale(0.95);
+  transform: translateY(-10px) scale(0.95);
 }
 </style>

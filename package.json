@@ -61,7 +61,6 @@
     "better-sqlite3": "^12.9.0",
     "idb-keyval": "^6.2.2",
     "katex": "^0.16.47",
-    "nuxt-atproto": "^0.1.1",
     "pug": "^3.0.4",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
