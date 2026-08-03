@@ -120,6 +120,9 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     'nuxt-atproto'
   ],
+  nitro: {
+    preset: 'static'
+  },
   site: {
     name: 'DigiDict',
     trailingSlash: true
