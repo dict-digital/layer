@@ -69,6 +69,19 @@ const changeColorMode = () => {
     colorMode.preference = 'system';
   }
 };
+
+/**
+ * アカウントメニュー
+ */
+const isOpenAccount = ref(false);
+const handleAccountOpen = () => {
+  isOpenAccount.value = true;
+  isOpen.value = false;
+};
+
+const handleAccountClose = () => {
+  isOpenAccount.value = false;
+};
 </script>
 
 <template>
@@ -100,6 +113,17 @@ const changeColorMode = () => {
         class="menu-dropdown"
       >
         <ul list-none p-1 m-0>
+          <!-- atmosphere -->
+          <li>
+            <button
+              justify-content
+              w-full
+              items-center
+              @click="handleAccountOpen"
+            >
+              <span>Atmosphere</span>
+            </button>
+          </li>
           <!-- カラーモード -->
           <li>
             <button
@@ -164,6 +188,8 @@ const changeColorMode = () => {
       </div>
     </Transition>
   </div>
+
+  <AtAccount v-if="isOpenAccount" @close="handleAccountClose" />
 </template>
 
 <style lang="scss" scoped>

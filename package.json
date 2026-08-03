@@ -47,6 +47,8 @@
     "vue": "^3.5.40"
   },
   "dependencies": {
+    "@atproto/api": "^0.20.36",
+    "@atproto/oauth-client-browser": "^0.5.1",
     "@fontsource-variable/fira-code": "^5.2.7",
     "@fontsource-variable/m-plus-1-code": "^5.2.9",
     "@fontsource/zen-kaku-gothic-new": "^5.2.7",
