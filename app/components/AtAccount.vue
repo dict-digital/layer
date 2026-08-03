@@ -34,15 +34,7 @@ const onLoginSubmit = async () => {
 </script>
 
 <template>
-  <div
-    class="root"
-    bg-red
-    p-6
-    rounded-2xl
-    shadow-xl
-    flex="~ col gap-5"
-    box-border
-  >
+  <div class="root" p-6 rounded-2xl shadow-xl flex="~ col gap-5" box-border>
     <div flex="~ items-center justify-between">
       <span text-xl font-bold tracking-tight>Atmosphere</span>
       <button
@@ -151,5 +143,6 @@ const onLoginSubmit = async () => {
   top: 50dvh;
   left: 50vw;
   transform: translate(-50%, -50%);
+  backdrop-filter: blur(8px) brightness(var(--backdropBr));
 }
 </style>
