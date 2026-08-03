@@ -59,6 +59,22 @@ const changeColorMode = () => {
     colorMode.preference = 'system';
   }
 };
+
+// atproto
+
+const { isLogged, session } = useAtprotoSession();
+const { signIn, signOut } = useAtprotoAuth();
+
+const handleAtSession = () => {
+  if ( isLogged ) {
+    const really = window.confirm(appConfig.myDict.i18n.atproto.signOut);
+    if (really) {
+      signOut();
+    }
+  } else {
+    signIn();
+  }
+}
 </script>
 
 <template>
@@ -90,6 +106,20 @@ const changeColorMode = () => {
       >
         <ul list-none p-1 m-0>
           <!-- 区切りは <hr /> で表記 -->
+          <li>
+            <button justify-between w-full items-center>
+              <span>
+                Atmosphere</span>
+              <span>
+                <template v-if="isLogged">
+                  {{ session?.sub }}
+                </template>
+                <template v-else>
+                  {{ appConfig.myDict.i18n.atproto.login }}
+                </template>
+              </span>
+            </button>
+          </li>
           <li>
             <button
               justify-between

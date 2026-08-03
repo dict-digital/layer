@@ -11,6 +11,10 @@ export default defineAppConfig({
       search: 'Search',
       title: 'Title',
       full_text: 'Full',
+      atproto: {
+        login: 'log in',
+        signOut: 'Sign Out?'
+      },
       color_mode: {
         name: 'Color Mode',
         system: 'System',
