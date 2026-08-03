@@ -22,13 +22,13 @@ export default defineNuxtConfig({
       clientMetadata: {
         remote: '',
         local: {
-          client_id: 'https://layer.dict.digital/client-metadata.json',
+          // client_id: 'https://layer.dict.digital/client-metadata.json',
           client_name: 'DigiDict',
-          client_uri: 'https://layer.dict.digital',
+          // client_uri: 'https://layer.dict.digital',
           logo_uri: 'https://layer.dict.digital/logo.png',
           tos_uri: 'https://layer.dict.digital/tos',
           policy_uri: 'https://layer.dict.digital/privacy',
-          redirect_uris: ['https://layer.dict.digital'],
+          // redirect_uris: ['https://layer.dict.digital'],
           scope: 'atproto repo:digital.dict.atproto.settings',
           grant_types: ['authorization_code', 'refresh_token'],
           response_types: ['code'],
