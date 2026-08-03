@@ -443,41 +443,43 @@ watch(
         <ul list-none p-1 m-0>
           <!-- AT Protocol -->
           <li>
-            <button
-              justify-between
-              w-full
-              items-center
-              @click="handleAtSession"
-            >
-              <span>
-                Atmosphere
-              </span>
+            <ClientOnly>
+              <button
+                justify-between
+                w-full
+                items-center
+                @click="handleAtSession"
+              >
+                <span>
+                  Atmosphere
+                </span>
 
-              <span>
-                <!-- ログイン済み -->
-                <template v-if="isLogged">
-                  <!-- プロフィール取得済み -->
-                  <template
-                    v-if="isProfileLoaded"
-                  >
-                    {{ handle }}
+                <span>
+                  <!-- ログイン済み -->
+                  <template v-if="isLogged">
+                    <!-- プロフィール取得済み -->
+                    <template
+                      v-if="isProfileLoaded"
+                    >
+                      {{ handle }}
+                    </template>
+
+                    <!-- プロフィール取得中 -->
+                    <template v-else>
+                      Loading...
+                    </template>
                   </template>
 
-                  <!-- プロフィール取得中 -->
+                  <!-- 未ログイン -->
                   <template v-else>
-                    Loading...
+                    {{
+                      appConfig.myDict.i18n
+                        .atproto.login
+                    }}
                   </template>
-                </template>
-
-                <!-- 未ログイン -->
-                <template v-else>
-                  {{
-                    appConfig.myDict.i18n
-                      .atproto.login
-                  }}
-                </template>
-              </span>
-            </button>
+                </span>
+              </button>
+            </ClientOnly>
           </li>
 
           <!-- カラーモード -->
