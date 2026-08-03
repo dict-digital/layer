@@ -168,5 +168,14 @@ const onLoginSubmit = async () => {
   left: 50vw;
   transform: translate(-50%, -50%);
   backdrop-filter: blur(8px) brightness(var(--backdropBr));
+
+  button {
+    background-color: var(--themeColor);
+    color: var(--background);
+  }
+  input {
+    background-color: var(--codeBack);
+    color: var(--foreground);
+  }
 }
 </style>
