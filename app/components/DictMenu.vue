@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { joinURL, withoutHost } from 'ufo';
 
 const appConfig = useAppConfig();
-
 const i18n = appConfig.myDict.i18n;
-
 const colorMode = useColorMode();
-
 const route = useRoute();
 
 watch(
@@ -78,10 +74,68 @@ const handleAtSession = () => {
 
 const handle = ref<string>('');
 
+// --- AT Protocol 設定同期処理 ---
+const SETTINGS_COLLECTION = 'digital.dict.atproto.settings'; // 独自のNSIDを設定
+const isSyncing = ref(false); // 設定取得中の自動保存をガードするフラグ
+
+// PDSからの設定読み込み
+const fetchUserSettings = async (did: string) => {
+  if (!import.meta.client) return;
+  try {
+    const agent = useAtprotoAgent('authenticated');
+    const res = await agent.api.com.atproto.repo.getRecord({
+      repo: did,
+      collection: SETTINGS_COLLECTION,
+      rkey: 'self',
+    });
+
+    const record = res.data.value as { colorMode?: string };
+    if (record?.colorMode) {
+      isSyncing.value = true;
+      colorMode.preference = record.colorMode;
+      // 設定反映後の変更検知を一度スキップするために少し遅延して解除
+      setTimeout(() => {
+        isSyncing.value = false;
+      }, 500);
+    }
+  } catch (err) {
+    // レコードがまだ存在しない（初回ログイン時など）場合は無視
+  }
+};
+
+// PDSへの設定保存
+const saveUserSettings = async (newColorMode: string) => {
+  if (!isLogged.value || !session.value?.sub || !import.meta.client) return;
+  try {
+    const agent = useAtprotoAgent('authenticated');
+    await agent.api.com.atproto.repo.putRecord({
+      repo: session.value.sub,
+      collection: SETTINGS_COLLECTION,
+      rkey: 'self',
+      record: {
+        $type: SETTINGS_COLLECTION,
+        colorMode: newColorMode,
+        updatedAt: new Date().toISOString(),
+      },
+    });
+  } catch (err) {
+    console.error('Failed to save color mode to PDS:', err);
+  }
+};
+
+// カラーモードが変更されたらPDSへ同期（保存）
+watch(
+  () => colorMode.preference,
+  (newMode) => {
+    if (isSyncing.value) return; // 復元処理による変更時は保存しない
+    saveUserSettings(newMode);
+  }
+);
+
+// ログイン状態を監視してハンドル名の取得＆設定の復元を実行
 watch(
   () => session.value?.sub,
   async (did) => {
-    // クライアントサイドかつ DID が存在する場合のみ実行
     if (!did || !import.meta.client) return;
 
     try {
@@ -89,8 +143,11 @@ watch(
       const profile = await agent.getProfile({ actor: did });
 
       handle.value = profile.data.handle;
+
+      // ログイン完了後に PDS からカラーモード設定を取得
+      await fetchUserSettings(did);
     } catch (err) {
-      console.error('Failed to get profile:', err);
+      console.error('Failed to get profile or settings:', err);
     }
   },
   { immediate: true }
@@ -125,7 +182,6 @@ watch(
         class="menu-dropdown"
       >
         <ul list-none p-1 m-0>
-          <!-- 区切りは <hr /> で表記 -->
           <li>
             <button
               justify-between
