@@ -66,7 +66,7 @@ const { isLogged, session } = useAtprotoSession();
 const { signIn, signOut } = useAtprotoAuth();
 
 const handleAtSession = () => {
-  if (isLogged) {
+  if (isLogged.value) {
     const really = window.confirm(appConfig.myDict.i18n.atproto.signOut);
     if (really) {
       signOut();
