@@ -1,18 +1,18 @@
 export default defineNuxtPlugin(async () => {
-  const { session } = useAtprotoSession()
-  const { restore } = useAtprotoAuth()
+  const { session } = useAtprotoSession();
+  const { restore } = useAtprotoAuth();
 
   // 1. 前回ログインしていた DID を localStorage から取得
-  const lastDid = localStorage.getItem('atproto_last_did')
+  const lastDid = localStorage.getItem('atproto_last_did');
 
   if (lastDid) {
     try {
       // 2. DID を指定してセッションを復元
-      await restore(lastDid)
+      await restore(lastDid);
     } catch (err) {
-      console.error('Failed to restore session:', err)
+      console.error('Failed to restore session:', err);
       // セッション期限切れなどの場合はストレージからクリア
-      localStorage.removeItem('atproto_last_did')
+      localStorage.removeItem('atproto_last_did');
     }
   }
 
@@ -21,11 +21,11 @@ export default defineNuxtPlugin(async () => {
     () => session.value?.sub,
     (newDid) => {
       if (newDid) {
-        localStorage.setItem('atproto_last_did', newDid)
+        localStorage.setItem('atproto_last_did', newDid);
       } else {
-        localStorage.removeItem('atproto_last_did')
+        localStorage.removeItem('atproto_last_did');
       }
     },
     { immediate: true }
-  )
-})
+  );
+});

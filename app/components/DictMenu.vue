@@ -75,6 +75,26 @@ const handleAtSession = () => {
     signIn();
   }
 };
+
+const handle = ref<string>('');
+
+watch(
+  () => session.value?.sub,
+  async (did) => {
+    if (!did) return;
+
+    try {
+      const agent = useAtprotoAgent('authenticated');
+      // ログイン中ユーザーのプロファイルを取得
+      const profile = await agent.getProfile({ actor: did });
+
+      handle.value = profile.data.handle; // 例: alice.bsky.social
+    } catch (e) {
+      console.error('Failed to fetch profile:', e);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -116,7 +136,7 @@ const handleAtSession = () => {
               <span> Atmosphere</span>
               <span>
                 <template v-if="isLogged">
-                  {{ session?.sub }}
+                  {{ handle }}
                 </template>
                 <template v-else>
                   {{ appConfig.myDict.i18n.atproto.login }}
