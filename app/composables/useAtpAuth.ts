@@ -6,38 +6,32 @@ import { joinURL } from 'ufo';
 let oauthClient: BrowserOAuthClient | null = null;
 let initPromise: Promise<void> | null = null;
 
-const createOAuthClient = () => {
-  if (import.meta.server) {
-    return null;
-  }
-
-  if (oauthClient) {
-    return oauthClient;
-  }
+const createOAuthClient = async () => {
+  if (import.meta.server) return null;
+  if (oauthClient) return oauthClient;
 
   const origin = window.location.origin;
   const hostname = window.location.hostname;
 
-  // 1. localhost や 127.0.0.1 の判定
+  // 1. ローカル開発（Loopback）の場合
   const isLoopback = hostname === 'localhost' || hostname === '127.0.0.1';
 
-  oauthClient = new BrowserOAuthClient({
-    // 2. ローカル開発時は undefined を渡すと @atproto/oauth-client-browser がループバックモード動作になります
-    clientMetadata: isLoopback
-      ? undefined
-      : {
-          client_id: joinURL(origin, 'client-metadata.json'),
-          client_name: 'My Nuxt Dictionary App',
-          client_uri: origin,
-          redirect_uris: [origin],
-          scope: 'atproto transition:generic',
-          grant_types: ['authorization_code', 'refresh_token'],
-          response_types: ['code'],
-          token_endpoint_auth_method: 'none',
-          application_type: 'web'
-        },
-    handleResolver: 'https://bsky.social'
-  });
+  if (isLoopback) {
+    oauthClient = new BrowserOAuthClient({
+      // 開発時は clientMetadata を undefined にするとライブラリが自動で Loopback 処理を行う
+      clientMetadata: undefined,
+      handleResolver: 'https://bsky.social'
+    });
+  } else {
+    // 2. 本番デプロイ環境の場合（ドキュメント推奨の .load() を使用）
+    // client-metadata.json の URL を指定して動的ロード＆検証させる
+    const metadataUrl = joinURL(origin, 'client-metadata.json');
+
+    oauthClient = await BrowserOAuthClient.load({
+      clientId: metadataUrl,
+      handleResolver: 'https://bsky.social'
+    });
+  }
 
   return oauthClient;
 };
@@ -53,29 +47,24 @@ export const useAtpAuth = () => {
       return;
     }
 
-    if (initPromise) {
-      return initPromise;
-    }
+    if (initPromise) return initPromise;
 
     initPromise = (async () => {
       try {
-        const client = createOAuthClient();
+        const client = await createOAuthClient();
+        if (!client) return;
 
-        if (!client) {
-          return;
-        }
-
-        // 既存のセッション復元またはリダイレクト戻り処理
+        // ドキュメント仕様: init() はアプリ起動時に1度だけ実行する
         const result = await client.init();
 
-        if (!result) {
+        if (result) {
+          // セッション復元完了
+          agent.value = new Agent(result.session);
+          isAuthenticated.value = true;
+        } else {
           agent.value = null;
           isAuthenticated.value = false;
-          return;
         }
-
-        agent.value = new Agent(result.session);
-        isAuthenticated.value = true;
       } catch (error) {
         console.error('AT Protocol OAuth initialization failed:', error);
         agent.value = null;
@@ -89,21 +78,18 @@ export const useAtpAuth = () => {
   };
 
   const login = async (handleOrPds: string) => {
-    if (import.meta.server) {
-      return;
-    }
+    if (import.meta.server) return;
 
-    // 3. 初期化が完了しているか確実に待つ
+    // 初期化を待つ
     await initAuth();
-
-    const client = createOAuthClient();
+    const client = await createOAuthClient();
 
     if (!client) {
-      throw new Error('OAuth client is not available on the server.');
+      throw new Error('OAuth client is not available.');
     }
 
     try {
-      // 認可エンドポイントへリダイレクト実行
+      // 認可画面へリダイレクト（Promiseは解決せずリダイレクトされる）
       await client.signIn(handleOrPds);
     } catch (error) {
       console.error('AT Protocol login failed:', error);
@@ -112,11 +98,9 @@ export const useAtpAuth = () => {
   };
 
   const logout = async () => {
-    if (import.meta.server) {
-      return;
-    }
+    if (import.meta.server) return;
 
-    const client = createOAuthClient();
+    const client = await createOAuthClient();
 
     try {
       if (client && agent.value) {
@@ -125,7 +109,6 @@ export const useAtpAuth = () => {
       }
     } catch (error) {
       console.error('AT Protocol logout failed:', error);
-      throw error;
     } finally {
       agent.value = null;
       isAuthenticated.value = false;
