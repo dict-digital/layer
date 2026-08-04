@@ -89,9 +89,6 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@nuxtjs/color-mode'
   ],
-  nitro: {
-    preset: 'static'
-  },
   site: {
     name: 'DigiDict',
     trailingSlash: true
