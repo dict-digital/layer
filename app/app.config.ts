@@ -12,8 +12,15 @@ export default defineAppConfig({
       title: 'Title',
       full_text: 'Full',
       atproto: {
-        login: 'log in',
-        signOut: 'Sign Out?'
+        login: {
+          label: "handle or PDS address",
+          connecting: "connecting...",
+          button: "Log In to your PDS",
+          error: "Log in failed. Please check your handle."
+        },
+        signOut: 'Sign Out',
+        checkStatus: 'Checking authorization status...',
+        sync: 'PDS Synced',
       },
       color_mode: {
         name: 'Color Mode',

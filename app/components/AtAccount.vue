@@ -7,6 +7,10 @@ const handleClose = () => {
   emit('close');
 };
 
+const appConfig = useAppConfig();
+
+const i18n = appConfig.myDict.i18n;
+
 const { login, logout, isAuthenticated, isInitializing, agent } = useAtpAuth();
 
 const handleInput = ref('');
@@ -45,11 +49,9 @@ const onLoginSubmit = async () => {
   try {
     // 例: "alice.bsky.social" や "https://pds.example.com"
     await login(handleInput.value);
-    // 成功すると PDS / Bluesky の認可画面へリダイレクトされます
   } catch (error: any) {
     console.error(error);
-    errorMessage.value =
-      'ログインの開始に失敗しました。ハンドルを確認してください。';
+    errorMessage.value = i18n.atproto.login.error;
   } finally {
     isLoading.value = false;
   }
@@ -85,13 +87,13 @@ const onLoginSubmit = async () => {
         opacity-80
       >
         <i i-svg-spinners-180-ring-with-bg text-lg />
-        <span>認証状態を確認中...</span>
+        <span>{{ i18n.atproto.checkStatus }}</span>
       </div>
 
       <div v-else-if="isAuthenticated" flex="~ col gap-4" py-2>
         <div flex="~ items-center gap-2" p-3 rounded-lg text-sm>
           <span text-xs>🟢</span>
-          <span font-medium>PDS同期中:</span>
+          <span font-medium>{{ i18n.atproto.sync }}:</span>
           <code text-xs font-mono truncate max-w-xs>
             {{ userHandle ? `@${userHandle}` : agent?.did }}
           </code>
@@ -110,14 +112,14 @@ const onLoginSubmit = async () => {
           active="scale-98"
           @click="logout"
         >
-          ログアウト
+          {{ i18n.atproto.signOut }}
         </button>
       </div>
 
       <div v-else flex="~ col gap-3">
         <form flex="~ col gap-3" @submit.prevent="onLoginSubmit">
           <div flex="~ col gap-1.5">
-            <label text-xs font-medium opacity-80>PDS ハンドルまたは URL</label>
+            <label text-xs font-medium opacity-80>{{ i18n.atproto.login.label }}</label>
             <input
               v-model="handleInput"
               type="text"
@@ -150,7 +152,7 @@ const onLoginSubmit = async () => {
             un-disabled="opacity-50 cursor-not-allowed transform-none"
           >
             <i v-if="isLoading" i-svg-spinners-180-ring-with-bg />
-            <span>{{ isLoading ? '接続中...' : 'PDSにログイン' }}</span>
+            <span>{{ isLoading ? i18n.atproto.login.connecting : i18n.atproto.login.button }}</span>
           </button>
         </form>
         <p v-if="errorMessage" text-xs m-0 pt-1 opacity-90>
