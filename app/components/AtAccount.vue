@@ -51,7 +51,12 @@ const onLoginSubmit = async () => {
     await login(handleInput.value);
   } catch (error: any) {
     console.error(error);
-    errorMessage.value = i18n.atproto.login.error;
+    
+    // エラーメッセージの取得（Errorインスタンスの場合は error.message を使用）
+    const msg = error instanceof Error ? error.message : String(error);
+
+    // 取得したメッセージを errorMessage にセット (フォールバック用に i18n も活用可能)
+    errorMessage.value = msg || i18n.atproto.login.error;
   } finally {
     isLoading.value = false;
   }
