@@ -94,14 +94,6 @@ export default defineNuxtConfig({
       routes: ['/client-metadata.json']
     }
   },
-  routeRules: {
-    '/client-metadata.json': {
-      headers: {
-        'Cache-Control': 'public, max-age=1, s-maxage=1, must-revalidate',
-        'Access-Control-Allow-Origin': '*',
-      },
-    },
-  },
   site: {
     name: 'DigiDict',
     trailingSlash: true
