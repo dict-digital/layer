@@ -55,7 +55,7 @@ export default defineNuxtConfig({
       }
     }
   },
-  hooks: {
+  /* hooks: {
     'nitro:build:public-assets': (nitro) => {
       if (process.env.NODE_ENV !== 'production') return;
 
@@ -82,7 +82,7 @@ export default defineNuxtConfig({
         console.error('[Pagefind] Indexing failed:', error);
       }
     }
-  },
+  }, */
   modules: [
     '@nuxtjs/sitemap',
     '@nuxt/content',
