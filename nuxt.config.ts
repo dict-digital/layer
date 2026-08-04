@@ -47,6 +47,7 @@ export default defineNuxtConfig({
     resolve('./app/assets/global.scss'),
     'katex/dist/katex.min.css'
   ],
+  debug: true,
   devtools: { enabled: true },
   experimental: {
     defaults: {

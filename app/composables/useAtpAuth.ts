@@ -97,6 +97,20 @@ export const useAtpAuth = () => {
     }
   };
 
+  const loginWithBluesky = async () => {
+    if (import.meta.server) return;
+
+    await initAuth();
+
+    const client = await createOAuthClient();
+
+    if (!client) {
+      throw new Error('OAuth client is not available.');
+    }
+
+    await client.signIn('bsky.social');
+  };
+
   const logout = async () => {
     if (import.meta.server) return;
 
@@ -125,6 +139,7 @@ export const useAtpAuth = () => {
     isInitializing,
     initAuth,
     login,
+    loginWithBluesky,
     logout
   };
 };

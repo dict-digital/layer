@@ -7,7 +7,7 @@ const handleClose = () => {
   emit('close');
 };
 
-const { login, logout, isAuthenticated, isInitializing, agent } = useAtpAuth();
+const { login, loginWithBluesky, logout, isAuthenticated, isInitializing, agent } = useAtpAuth();
 
 const handleInput = ref('');
 const isLoading = ref(false);
@@ -57,17 +57,7 @@ const onLoginSubmit = async () => {
 
 // Blueskyの画面上でログイン
 const onBlueskyLogin = async () => {
-  isLoading.value = true;
-  errorMessage.value = '';
-
-  try {
-    await login('bsky.social');
-  } catch (error: any) {
-    console.error(error);
-    errorMessage.value = 'Blueskyへの接続に失敗しました．';
-  } finally {
-    isLoading.value = false;
-  }
+  await loginWithBluesky();
 };
 </script>
 
