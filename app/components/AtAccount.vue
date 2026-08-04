@@ -7,7 +7,7 @@ const handleClose = () => {
   emit('close');
 };
 
-const { login, loginWithBluesky, logout, isAuthenticated, isInitializing, agent } = useAtpAuth();
+const { login, logout, isAuthenticated, isInitializing, agent } = useAtpAuth();
 
 const handleInput = ref('');
 const isLoading = ref(false);
@@ -53,11 +53,6 @@ const onLoginSubmit = async () => {
   } finally {
     isLoading.value = false;
   }
-};
-
-// Blueskyの画面上でログイン
-const onBlueskyLogin = async () => {
-  await loginWithBluesky();
 };
 </script>
 
@@ -126,7 +121,7 @@ const onBlueskyLogin = async () => {
             <input
               v-model="handleInput"
               type="text"
-              placeholder="your-handle.bsky.social"
+              placeholder="alice.bsky.social"
               :disabled="isLoading"
               px-3
               py-2.5
@@ -157,22 +152,6 @@ const onBlueskyLogin = async () => {
             <i v-if="isLoading" i-svg-spinners-180-ring-with-bg />
             <span>{{ isLoading ? '接続中...' : 'PDSにログイン' }}</span>
           </button>
-          <button
-            @click="onBlueskyLogin"
-            flex="~ items-center justify-center gap-2"
-            px-4
-            py-2.5
-            rounded-lg
-            font-medium
-            text-sm
-            cursor-pointer
-            transition="all duration-200"
-            hover="opacity-90"
-            active="scale-98"
-            class="bskyButton"
-          >
-            Blueskyで継続
-          </button>
         </form>
         <p v-if="errorMessage" text-xs m-0 pt-1 opacity-90>
           {{ errorMessage }}
@@ -196,11 +175,6 @@ const onBlueskyLogin = async () => {
   .sessionButton {
     background-color: var(--themeColor);
     color: var(--background);
-    border: 1px solid var(--background);
-  }
-  .bskyButton {
-    background-color: #1185fe;
-    color: white;
     border: 1px solid var(--background);
   }
   input {

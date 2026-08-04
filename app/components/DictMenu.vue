@@ -4,7 +4,7 @@ import { joinURL, withoutHost } from 'ufo';
 
 const appConfig = useAppConfig();
 const i18n = appConfig.myDict.i18n;
-const colorMode = useColorMode();
+const { colorMode, setColorMode } = useColorSync();
 const route = useRoute();
 
 /**
@@ -62,11 +62,11 @@ const changeColorMode = () => {
   const current = colorMode.preference;
 
   if (current === 'system') {
-    colorMode.preference = 'light';
+    setColorMode('light');
   } else if (current === 'light') {
-    colorMode.preference = 'dark';
+    setColorMode('dark');
   } else {
-    colorMode.preference = 'system';
+    setColorMode('system');
   }
 };
 
