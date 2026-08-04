@@ -51,7 +51,7 @@ const onLoginSubmit = async () => {
     await login(handleInput.value);
   } catch (error: any) {
     console.error(error);
-    
+
     // エラーメッセージの取得（Errorインスタンスの場合は error.message を使用）
     const msg = error instanceof Error ? error.message : String(error);
 
@@ -124,7 +124,9 @@ const onLoginSubmit = async () => {
       <div v-else flex="~ col gap-3">
         <form flex="~ col gap-3" @submit.prevent="onLoginSubmit">
           <div flex="~ col gap-1.5">
-            <label text-xs font-medium opacity-80>{{ i18n.atproto.login.label }}</label>
+            <label text-xs font-medium opacity-80>{{
+              i18n.atproto.login.label
+            }}</label>
             <input
               v-model="handleInput"
               type="text"
@@ -157,7 +159,11 @@ const onLoginSubmit = async () => {
             un-disabled="opacity-50 cursor-not-allowed transform-none"
           >
             <i v-if="isLoading" i-svg-spinners-180-ring-with-bg />
-            <span>{{ isLoading ? i18n.atproto.login.connecting : i18n.atproto.login.button }}</span>
+            <span>{{
+              isLoading
+                ? i18n.atproto.login.connecting
+                : i18n.atproto.login.button
+            }}</span>
           </button>
         </form>
         <p v-if="errorMessage" text-xs m-0 pt-1 opacity-90>

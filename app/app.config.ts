@@ -1,5 +1,6 @@
 export default defineAppConfig({
   myDict: {
+    atprotoHost: '',
     theme: {
       lightColor: '#df841c',
       darkColor: '#ffd91c'
@@ -13,14 +14,14 @@ export default defineAppConfig({
       full_text: 'Full',
       atproto: {
         login: {
-          label: "handle or PDS address",
-          connecting: "connecting...",
-          button: "Log In to your PDS",
-          error: "Log in failed. Please check your handle."
+          label: 'handle or PDS address',
+          connecting: 'connecting...',
+          button: 'Log In to your PDS',
+          error: 'Log in failed. Please check your handle.'
         },
         signOut: 'Sign Out',
         checkStatus: 'Checking authorization status...',
-        sync: 'PDS Synced',
+        sync: 'PDS Synced'
       },
       color_mode: {
         name: 'Color Mode',

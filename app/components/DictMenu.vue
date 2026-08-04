@@ -114,7 +114,7 @@ const handleAccountClose = () => {
       >
         <ul list-none p-1 m-0>
           <!-- atmosphere -->
-          <li>
+          <li v-if="appConfig.myDict.atprotoHost">
             <button
               justify-content
               w-full

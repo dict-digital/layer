@@ -1,3 +1,5 @@
 export default defineAppConfig({
-  myDict: {}
+  myDict: {
+    atprotoHost: 'https://layer.nuxt.com'
+  }
 });
