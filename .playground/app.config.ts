@@ -1,5 +1,5 @@
 export default defineAppConfig({
   myDict: {
-    atprotoHost: 'https://layer.nuxt.com'
+    atprotoHost: 'https://layer.dict.digital'
   }
 });
