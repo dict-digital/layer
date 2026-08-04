@@ -31,6 +31,7 @@ const createOAuthClient = async () => {
   if (isLoopback) {
     oauthClient = new BrowserOAuthClient({
       clientMetadata: undefined,
+      handleResolver: 'https://bsky.social',
     })
   } else {
     // 本番
@@ -41,6 +42,7 @@ const createOAuthClient = async () => {
 
     oauthClient = await BrowserOAuthClient.load({
       clientId: metadataUrl,
+      handleResolver: 'https://bsky.social',
     })
   }
 
