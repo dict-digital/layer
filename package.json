@@ -19,8 +19,6 @@
     "dev:prepare": "nuxt prepare .playground",
     "build": "nuxt build .playground",
     "generate": "nuxt generate .playground",
-    "pagefind:full": "pnpm exec pagefind --site dist/content --output-path dist/content_search",
-    "postgenerate": "pnpm pagefind:full",
     "preview": "nuxt preview .playground",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",

@@ -3,7 +3,9 @@ import { joinURL, withHttps } from 'ufo';
 const appConfig = useAppConfig();
 
 export default defineEventHandler((event) => {
-  const host = appConfig.myDict.atprotoHost || getRequestHost(event, { xForwardedHost: true });
+  const host =
+    appConfig.myDict.atprotoHost ||
+    getRequestHost(event, { xForwardedHost: true });
 
   const origin = withHttps(host);
 
@@ -21,7 +23,7 @@ export default defineEventHandler((event) => {
     client_name: appConfig.myDict.siteName || 'DigiDict',
     client_uri: origin,
     redirect_uris: [origin], // 必要に応じて [joinURL(origin, '/')]
-    scope: 'atproto repo:digital.dict.atproto.settings',
+    scope: 'atproto repo:digital.dict.settings',
     grant_types: ['authorization_code', 'refresh_token'],
     response_types: ['code'],
     token_endpoint_auth_method: 'none',

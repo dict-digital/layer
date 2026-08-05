@@ -50,6 +50,7 @@ export default defineAppConfig({
 
 declare module '@nuxt/schema' {
   interface MyDictConfig {
+    atprotoHost: string;
     theme: {
       lightColor: string;
       darkColor: string;
@@ -61,6 +62,17 @@ declare module '@nuxt/schema' {
       search: string;
       title: string;
       full_text: string;
+      atproto: {
+        login: {
+          label: string;
+          connecting: string;
+          button: string;
+          error: string;
+        };
+        signOut: string;
+        checkStatus: string;
+        sync: string;
+      };
       color_mode: {
         name: string;
         system: string;
