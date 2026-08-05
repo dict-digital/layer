@@ -1,12 +1,9 @@
-import type { Agent } from '@atproto/api';
-import { useColorMode } from '#imports';
-
 type ColorMode = 'system' | 'light' | 'dark';
 
 type ColorSettingsRecord = {
   [key: string]: unknown;
-  $type: 'digital.dict.atproto.settings';
-  colorMode: ColorMode;
+  $type: 'digital.dict.settings';
+  value: ColorMode;
   updatedAt: string;
 };
 
@@ -15,7 +12,7 @@ interface LocalColorSettings {
   updatedAt: string;
 }
 
-const COLLECTION = 'digital.dict.atproto.settings';
+const COLLECTION = 'digital.dict.settings';
 const RKEY = 'theme';
 
 const LOCAL_STORAGE_KEY = 'atproto:color-mode';
@@ -106,9 +103,9 @@ export const useColorSync = () => {
 
       if (
         record.$type !== COLLECTION ||
-        (record.colorMode !== 'system' &&
-          record.colorMode !== 'light' &&
-          record.colorMode !== 'dark') ||
+        (record.value !== 'system' &&
+          record.value !== 'light' &&
+          record.value !== 'dark') ||
         typeof record.updatedAt !== 'string'
       ) {
         return null;
@@ -116,7 +113,7 @@ export const useColorSync = () => {
 
       return {
         $type: COLLECTION,
-        colorMode: record.colorMode,
+        value: record.value,
         updatedAt: record.updatedAt
       };
     } catch (error: any) {
@@ -144,7 +141,7 @@ export const useColorSync = () => {
 
     const record: ColorSettingsRecord = {
       $type: COLLECTION,
-      colorMode: colorModeValue,
+      value: colorModeValue,
       updatedAt
     };
 
@@ -203,9 +200,9 @@ export const useColorSync = () => {
 
       // PDSにしかない
       if (!localSettings && pdsSettings) {
-        colorMode.preference = pdsSettings.colorMode;
+        colorMode.preference = pdsSettings.value;
 
-        saveLocalSettings(pdsSettings.colorMode, pdsSettings.updatedAt);
+        saveLocalSettings(pdsSettings.value, pdsSettings.updatedAt);
 
         return;
       }
@@ -228,18 +225,18 @@ export const useColorSync = () => {
 
       // 不正な日時の場合はPDSを優先
       if (Number.isNaN(localTime) || Number.isNaN(pdsTime)) {
-        colorMode.preference = pdsSettings.colorMode;
+        colorMode.preference = pdsSettings.value;
 
-        saveLocalSettings(pdsSettings.colorMode, pdsSettings.updatedAt);
+        saveLocalSettings(pdsSettings.value, pdsSettings.updatedAt);
 
         return;
       }
 
       // PDSの方が新しい
       if (pdsTime > localTime) {
-        colorMode.preference = pdsSettings.colorMode;
+        colorMode.preference = pdsSettings.value;
 
-        saveLocalSettings(pdsSettings.colorMode, pdsSettings.updatedAt);
+        saveLocalSettings(pdsSettings.value, pdsSettings.updatedAt);
 
         return;
       }
@@ -253,9 +250,9 @@ export const useColorSync = () => {
 
       // 同時刻の場合
       // 値はPDSを正としてローカルに反映
-      colorMode.preference = pdsSettings.colorMode;
+      colorMode.preference = pdsSettings.value;
 
-      saveLocalSettings(pdsSettings.colorMode, pdsSettings.updatedAt);
+      saveLocalSettings(pdsSettings.value, pdsSettings.updatedAt);
     } catch (error) {
       console.error('[ColorSync] Synchronization failed:', error);
     } finally {
